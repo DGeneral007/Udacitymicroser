@@ -80,11 +80,12 @@ jobs:
                 keys: [frontend-build]
             # Your job code here
             - run:
+                name: scan frontend dependencies
                 command: |
                     cd frontend
                     npm install
                     # npm install oauth-sign@^0.9.0
-                    npm audit --audit-level=critical
+                    npm audit fix --audit-level=critical
 
     scan-backend:
         docker:
@@ -97,11 +98,12 @@ jobs:
                 keys: [backend-build]
             # Your job code here
             - run:
+                name: scan banckend dependencies
                 command: |
                     cd backend
                     npm install
                     # npm install oauth-sign@^0.9.0
-                    npm audit --audit-level=critical
+                    npm audit fix --audit-level=critical
 
 workflows:
     default:
