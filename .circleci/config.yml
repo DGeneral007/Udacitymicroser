@@ -126,17 +126,11 @@ jobs:
     deploy-infrastructure:
         docker:
             # Docker image here that supports AWS CLI
-            image: cimg/base
+            image: amazon/aws-cli
         steps:
             # Checkout code from git
             - checkout
-            - run:
-                name: install unzip and amazon cli
-                command: |
-                    apt-get install unzip curl \
-                    curl "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -o "awscli-bundle.zip" \
-                    unzip awscli-bundle.zip \
-                    sudo ./awscli-bundle/install -i /usr/local/aws -b /usr/local/bin/aws \
+            - run: yum install -y tar gzip
             - run:
                 name: Ensure back-end infrastructure exists
                 command: |
