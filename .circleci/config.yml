@@ -104,7 +104,7 @@ jobs:
                     npm run test
             - save_cache:
                 paths: [frontend/node_modules]
-                keys: frontend-test
+                key: frontend-test
                 
     test-backend:
         docker:
@@ -124,7 +124,7 @@ jobs:
                     npm run test
             - save_cache:
                 paths: [backend/node_modules]
-                keys: backend-test
+                key: backend-test
     # Test runs erros fixed
     scan-frontend:
         docker:
@@ -145,7 +145,7 @@ jobs:
                     npm audit --audit-level=critical
             - save_cache:
                 paths: [frontend/node_modules]
-                keys: scanfrontend-test
+                key: scanfrontend-test
 
     scan-backend:
         docker:
@@ -167,7 +167,7 @@ jobs:
                     npm audit --audit-level=critical
             - save_cache:
                 paths: [backend/node_modules]
-                keys: scanbackend-test
+                key: scanbackend-test
     # scan-test fixed
     deploy-infrastructure:
         docker:
