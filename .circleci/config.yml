@@ -135,7 +135,6 @@ jobs:
                 command: |
                     cd frontend
                     npm install
-                    # npm install oauth-sign@^0.9.0
                     npm audit fix --audit-level=critical
 
     scan-backend:
@@ -153,7 +152,6 @@ jobs:
                 command: |
                     cd backend
                     npm install
-                    # npm install oauth-sign@^0.9.0
                     npm audit fix --audit-level=critical
     # scan-test fixed
     deploy-infrastructure:
