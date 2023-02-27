@@ -49,9 +49,9 @@ commands:
             aws cloudformation delete-stack --stack-name udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}
             # Delete backend stack
             aws cloudformation delete-stack --stack-name udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}
-            # # Delete frontend stack
+            # # Destroy frontend stack
             # aws cloudformation delete-stack --stack-name udapeople-frontend-<< parameters.Workflow_id >>
-            # # Delete backend stack
+            # # Destroy backend stack
             # aws cloudformation delete-stack --stack-name udapeople-backend-<< parameters.Workflow_id >>
   revert-migrations:
     description: Revert the last migration, if any were executed during the current workflow
@@ -158,7 +158,7 @@ jobs:
 
   scan-backend:
     docker:
-      - image: cimg/node:13.8.0   #Executor
+      - image: cimg/node:13.8.0
     steps:
       - checkout
       - restore_cache:
@@ -175,7 +175,7 @@ jobs:
 
   deploy-infrastructure:
     docker:
-      - image: cimg/python:3.10   #Executor
+      - image: cimg/python:3.10
     steps:
       - checkout
       - install_awscli
@@ -209,18 +209,18 @@ jobs:
           paths:
             - project/.circleci/ansible/inventory.txt
       - destroy-environment
-          # workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}   # Here's where you will add some code to rollback on failure
+          # workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
 
   configure-infrastructure:
     docker:
-      # Docker image here that supports Ansible
-      - image: cimg/python:3.10   #Executor
+      # Docker image
+      - image: cimg/python:3.10
     steps:
       - checkout
       - install_ansible
       - install_awscli
       - add_ssh_keys:
-          fingerprints: ["d4:64:2b:23:8c:d9:0c:72:4e:7f:f7:1b:fa:81:6b:3e"]
+          fingerprints: ["8b:70:db:e1:2d:2a:e2:c8:3b:36:f2:b6:2d:c0:6c:03"]
       - attach_workspace:
           at: ~/
       - run:
@@ -234,7 +234,7 @@ jobs:
 
   run-migrations:
     docker:
-      - image: cimg/python:3.10   #Executor
+      - image: cimg/python:3.10
     steps:
       - checkout
       - install_awscli
@@ -257,7 +257,7 @@ jobs:
             else
               echo "No migrations are pending" 
             fi
-# rolls back; should migration fail
+      # rolls back should migration fail
       - destroy-environment
           # workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
       - revert-migrations  
@@ -265,7 +265,7 @@ jobs:
 
   deploy-frontend:
     docker:
-      - image: cimg/python:3.10   #Executor
+      - image: cimg/python:3.10
     steps:
       - checkout
       - install_awscli
@@ -294,7 +294,7 @@ jobs:
             npm run build
             tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz dist            
             aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
-# rolls back; should migration fail
+      # rolls back; should migration fail
       - destroy-environment
           # workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
       - revert-migrations 
@@ -302,7 +302,7 @@ jobs:
 
   deploy-backend:
     docker:
-      - image: cimg/python:3.10   #Executor
+      - image: cimg/python:3.10
     steps:
       - checkout
       - install_ansible
@@ -311,7 +311,7 @@ jobs:
       - restore_cache:
           keys: [backend-deps]
       - add_ssh_keys:
-          fingerprints: ["d4:64:2b:23:8c:d9:0c:72:4e:7f:f7:1b:fa:81:6b:3e"]
+          fingerprints: ["8b:70:db:e1:2d:2a:e2:c8:3b:36:f2:b6:2d:c0:6c:03"]
       - attach_workspace:
           at: ~/
       - run:
@@ -337,208 +337,208 @@ jobs:
             cd .circleci/ansible
             cat inventory.txt
             ansible-playbook -vvv -i inventory.txt deploy-backend.yml
-# rolls back; should migration fail
+      # rolls back should migration fail
       - destroy-environment
           # workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
       - revert-migrations 
           # workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
 
-#   smoke-test:
-#     docker:
-#       - image: cimg/base:stable   #Executor
-#     steps:
-#       - checkout
-#       - install_awscli
-#       - install_nodejs
-#       - run:
-#           name: Backend smoke test.
-#           command: |
-#             BACKEND_PUBLIC_IP=$(aws ec2 describe-instances \
-#               --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
-#               --query 'Reservations[*].Instances[*].PublicIpAddress' \
-#               --output text)
-#             export API_URL=http://${BACKEND_PUBLIC_IP}:3030
-#             if curl --connect-timeout 60 $API_URL/api/status | grep "ok"
-#             then
-#               exit 0
-#             else
-#               exit 1
-#             fi
-#       - run:
-#           name: Frontend smoke test.
-#           command: |
-#             FRONTEND_WEBSITE=http://udapeople-${CIRCLE_WORKFLOW_ID:0:7}.s3-website.${AWS_DEFAULT_REGION}.amazonaws.com
-#             if curl -s $FRONTEND_WEBSITE | grep "Welcome"
-#             then
-#               # This is the intentional error, if "Welcome" is indeed in the response this step will exit with exit code 1
-#               exit 0
-#             else
-#               exit 1
-#             fi
-# # rolls back; should migration fail
-#       - destroy-environment
-#           # workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
-#       - revert-migrations  
-#           # workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
+  smoke-test:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - install_awscli
+      - install_nodejs
+      - run:
+          name: Backend smoke test.
+          command: |
+            BACKEND_PUBLIC_IP=$(aws ec2 describe-instances \
+              --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
+              --query 'Reservations[*].Instances[*].PublicIpAddress' \
+              --output text)
+            export API_URL=http://${BACKEND_PUBLIC_IP}:3030
+            if curl --connect-timeout 60 $API_URL/api/status | grep "ok"
+            then
+              exit 0
+            else
+              exit 1
+            fi
+      - run:
+          name: Frontend smoke test.
+          command: |
+            FRONTEND_WEBSITE=http://udapeople-${CIRCLE_WORKFLOW_ID:0:7}.s3-website.${AWS_DEFAULT_REGION}.amazonaws.com
+            if curl -s $FRONTEND_WEBSITE | grep "Welcome"
+            then
+              # This is the intentional error, if "Welcome" is indeed in the response this step will exit with exit code 1
+              exit 0
+            else
+              exit 1
+            fi
+      # rolls back should migration fail
+      - destroy-environment
+          # workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
+      - revert-migrations  
+          # workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
 
-#   cloudfront-update:
-#     docker:
-#       - image: cimg/base:stable   #Executor
-#       # - image: circleci/node:13.8.0    #Executor
-#       # - image: alpine:latest      #Executor
-#     steps:
-#       - checkout
-#       - install_awscli
-#       - install_nodejs
-#       - run:
-#           name: Install dependencies
-#           command: |
-#             sudo apt-get update -y
-#             sudo apt install -y curl
-#       - run:
-#           name: Save Old Workflow ID to kvdb.io
-#           command: |
-#             export OLD_WORKFLOW_ID=$(aws cloudformation \
-#               list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
-#               --no-paginate --output text)
-#             echo "Old Workflow ID: $OLD_WORKFLOW_ID"
-#             curl https://kvdb.io/${KVDB_BUCKET}/old_workflow_id -d "${OLD_WORKFLOW_ID}"
-#       - run:
-#           name: Update cloudfront distribution
-#           command: |
-#             aws cloudformation deploy \
-#             --template-file .circleci/files/cloudfront.yml \
-#             --stack-name InitialStack \
-#             --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}"
-#             echo Current Workflow ID: "${CIRCLE_WORKFLOW_ID:0:7}"
-# # rolls back; should migration fail
-#       - destroy-environment
-#           # workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
-#       - revert-migrations
-#           # workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
+  cloudfront-update:
+    docker:
+      - image: cimg/base:stable
+      # - image: circleci/node:13.8.0
+      # - image: alpine:latest
+    steps:
+      - checkout
+      - install_awscli
+      - install_nodejs
+      - run:
+          name: Install dependencies
+          command: |
+            sudo apt-get update -y
+            sudo apt install -y curl
+      - run:
+          name: Save Old Workflow ID to kvdb.io
+          command: |
+            export OLD_WORKFLOW_ID=$(aws cloudformation \
+              list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
+              --no-paginate --output text)
+            echo "Old Workflow ID: $OLD_WORKFLOW_ID"
+            curl https://kvdb.io/${KVDB_BUCKET}/old_workflow_id -d "${OLD_WORKFLOW_ID}"
+      - run:
+          name: Update cloudfront distribution
+          command: |
+            aws cloudformation deploy \
+            --template-file .circleci/files/cloudfront.yml \
+            --stack-name InitialStack \
+            --parameter-overrides WorkflowID="${CIRCLE_WORKFLOW_ID:0:7}"
+            echo Current Workflow ID: "${CIRCLE_WORKFLOW_ID:0:7}"
+# rolls back should migration fail
+      - destroy-environment
+          # workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
+      - revert-migrations
+          # workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
 
-#   cleanup:
-#     docker:                                                                           
-#       - image: cimg/base:stable   #Executor
-#     steps:
-#       - checkout
-#       - install_awscli
-#       - install_nodejs
-#       - run:
-#           name: Remove old stacks and files
-#           command: |
-#             export STACKS=($(aws cloudformation list-stacks \
-#                 --query "StackSummaries[*].StackName" \
-#                 --stack-status-filter CREATE_COMPLETE --no-paginate --output text))
-#             echo Stack names: "${STACKS[@]}"
-#             export OldWorkflowID=$(curl --insecure https://kvdb.io/${KVDB_BUCKET}/old_workflow_id)
-#             echo Old Workflow ID: $OldWorkflowID
-#             if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]
-#             then
-#               aws s3 rm "s3://udapeople-${OldWorkflowID}" --recursive
-#               aws cloudformation delete-stack --stack-name "udapeople-backend-${OldWorkflowID}"
-#               aws cloudformation delete-stack --stack-name "udapeople-frontend-${OldWorkflowID}"
-#             fi
-# # =============================================================================================
+  cleanup:
+    docker:                                                                           
+      - image: cimg/base:stable 
+    steps:
+      - checkout
+      - install_awscli
+      - install_nodejs
+      - run:
+          name: Remove old stacks and files
+          command: |
+            export STACKS=($(aws cloudformation list-stacks \
+                --query "StackSummaries[*].StackName" \
+                --stack-status-filter CREATE_COMPLETE --no-paginate --output text))
+            echo Stack names: "${STACKS[@]}"
+            export OldWorkflowID=$(curl --insecure https://kvdb.io/${KVDB_BUCKET}/old_workflow_id)
+            echo Old Workflow ID: $OldWorkflowID
+            if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]
+            then
+              aws s3 rm "s3://udapeople-${OldWorkflowID}" --recursive
+              aws cloudformation delete-stack --stack-name "udapeople-backend-${OldWorkflowID}"
+              aws cloudformation delete-stack --stack-name "udapeople-frontend-${OldWorkflowID}"
+            fi
+# =============================================================================================
 
-#   # cleanup:
-#   #   docker:
-#   #     - image: amazon/aws-cli
-#   #   steps:
-#   #     - checkout
-#   #     - run:
-#   #         name: Get all stack workflow id and remove old stack files
-#   #         command: |
-#   #           CURRENT_WORKFLOW_ID=${CIRCLE_WORKFLOW_ID:0:7}
-#   #           echo current workflow id: $CURRENT_WORKFLOW_ID
-#   #           export STACKS=($(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
-#   #           --stack-status-filter CREATE_COMPLETE --no-paginate --output text))
-#   #           mystacks=($STACKS)
-#   #           echo ${#mystacks[@]} items in stack :
-#   #           echo $mystacks
-#   #           for work_id in ${mystacks[@]}
-#   #           do
-#   #           if [ ${work_id: -7} != $CURRENT_WORKFLOW_ID ]
-#   #           then
-#   #               aws s3 rm "s3://udapeople-${work_id: -7}" --recursive
-#   #               aws cloudformation delete-stack --stack-name "udapeople-backend-${work_id: -7}"
-#   #               aws cloudformation delete-stack --stack-name "udapeople-frontend-${work_id: -7}"
-#   #               echo $work_id removed from stack
-#   #           else
-#   #             echo No old stack to remove
-#   #           fi
-#   #           done
-# # =====================================================================================
-#   configure-node-exporter:
-#     docker:
-#       # - image: amazon/aws-cli   #Executor
-#       - image: cimg/python:3.10     #Executor    
-#     steps:
-#       - checkout
-#       - install_ansible
-#       - install_awscli
-#       - add_ssh_keys:
-#           fingerprints: ["d4:64:2b:23:8c:d9:0c:72:4e:7f:f7:1b:fa:81:6b:3e"]
-#       # - run:
-#       #     name: Install dependencies
-#       #     command: |
-#       #       yum update -y
-#       #       yum install -y  tar gzip
-#       #       curl -sL https://rpm.nodesource.com/setup_13.x | bash -
-#       #       yum install -y nodejs
-#       #       amazon-linux-extras install -y epel
-#       #       yum install -y ansible
-#       - attach_workspace:
-#           at: ~/
-#       - run:
-#           name: Configure node_exporter
-#           command: |
-#             cd .circleci/ansible
-#             cat inventory.txt
-#             ansible-playbook configure-prometheus-node-exporter.yml -i inventory.txt
-#   deploy-prometheus-server:
-#     docker:
-#       # - image: amazon/aws-cli    #Executor
-#       - image: cimg/python:3.10         #Executor
-#     steps:
-#       - checkout
-#       - install_ansible
-#       - install_awscli
-#       - add_ssh_keys:
-#           fingerprints: ["d4:64:2b:23:8c:d9:0c:72:4e:7f:f7:1b:fa:81:6b:3e"]
-#       # - run:
-#       #     name: Install dependencies
-#       #     command: |
-#       #       yum update -y
-#       #       yum install -y  tar gzip
-#       #       curl -sL https://rpm.nodesource.com/setup_13.x | bash -
-#       #       yum install -y nodejs
-#       #       amazon-linux-extras install -y epel
-#       #       yum install -y ansible
-#       - attach_workspace:
-#           at: ~/
-#       - run:
-#           name: Spin up EC2 server for prometheus
-#           command: |
-#             echo "[server]" >> .circleci/ansible/inventory.txt
-#             aws cloudformation deploy \
-#               --template-file .circleci/files/prometheus-server.yml \
-#               --tags project=prometheus \
-#               --stack-name udapeople-prometheus-${CIRCLE_WORKFLOW_ID:0:7} \
-#               --parameter-overrides ID=${CIRCLE_WORKFLOW_ID:0:7}
-#       - run:
-#           name: Append IP to inventory file
-#           command: |
-#             aws ec2 describe-instances \
-#             --query 'Reservations[*].Instances[*].PublicIpAddress' \
-#             --filters "Name=tag:project,Values=prometheus" \
-#             --output text >> .circleci/ansible/inventory.txt
-#       - run:
-#           name: Install prometheus and alertmanager on server
-#           command: |
-#             cd .circleci/ansible
-#             cat inventory.txt
-#             ansible-playbook -i inventory.txt configure-prometheus-alertmanager.yml  
+  # cleanup:
+  #   docker:
+  #     - image: amazon/aws-cli
+  #   steps:
+  #     - checkout
+  #     - run:
+  #         name: Get all stack workflow id and remove old stack files
+  #         command: |
+  #           CURRENT_WORKFLOW_ID=${CIRCLE_WORKFLOW_ID:0:7}
+  #           echo current workflow id: $CURRENT_WORKFLOW_ID
+  #           export STACKS=($(aws cloudformation list-stacks --query "StackSummaries[*].StackName" \
+  #           --stack-status-filter CREATE_COMPLETE --no-paginate --output text))
+  #           mystacks=($STACKS)
+  #           echo ${#mystacks[@]} items in stack :
+  #           echo $mystacks
+  #           for work_id in ${mystacks[@]}
+  #           do
+  #           if [ ${work_id: -7} != $CURRENT_WORKFLOW_ID ]
+  #           then
+  #               aws s3 rm "s3://udapeople-${work_id: -7}" --recursive
+  #               aws cloudformation delete-stack --stack-name "udapeople-backend-${work_id: -7}"
+  #               aws cloudformation delete-stack --stack-name "udapeople-frontend-${work_id: -7}"
+  #               echo $work_id removed from stack
+  #           else
+  #             echo No old stack to remove
+  #           fi
+  #           done
+# =====================================================================================
+  configure-node-exporter:
+    docker:
+      # - image: amazon/aws-cli
+      - image: cimg/python:3.10    # testing another image
+    steps:
+      - checkout
+      - install_ansible
+      - install_awscli
+      - add_ssh_keys:
+          fingerprints: ["8b:70:db:e1:2d:2a:e2:c8:3b:36:f2:b6:2d:c0:6c:03"]
+      # - run:
+      #     name: Install dependencies
+      #     command: |
+      #       yum update -y
+      #       yum install -y  tar gzip
+      #       curl -sL https://rpm.nodesource.com/setup_13.x | bash -
+      #       yum install -y nodejs
+      #       amazon-linux-extras install -y epel
+      #       yum install -y ansible
+      - attach_workspace:
+          at: ~/
+      - run:
+          name: Configure node_exporter
+          command: |
+            cd .circleci/ansible
+            cat inventory.txt
+            ansible-playbook configure-prometheus-node-exporter.yml -i inventory.txt
+  deploy-prometheus-server:
+    docker:
+      # - image: amazon/aws-cli
+      - image: cimg/python:3.10  # Testing another image
+    steps:
+      - checkout
+      - install_ansible
+      - install_awscli
+      - add_ssh_keys:
+          fingerprints: ["8b:70:db:e1:2d:2a:e2:c8:3b:36:f2:b6:2d:c0:6c:03"]
+      # - run:
+      #     name: Install dependencies
+      #     command: |
+      #       yum update -y
+      #       yum install -y  tar gzip
+      #       curl -sL https://rpm.nodesource.com/setup_13.x | bash -
+      #       yum install -y nodejs
+      #       amazon-linux-extras install -y epel
+      #       yum install -y ansible
+      - attach_workspace:
+          at: ~/
+      - run:
+          name: Spin up EC2 server for prometheus
+          command: |
+            echo "[server]" >> .circleci/ansible/inventory.txt
+            aws cloudformation deploy \
+              --template-file .circleci/files/prometheus-server.yml \
+              --tags project=prometheus \
+              --stack-name udapeople-prometheus-${CIRCLE_WORKFLOW_ID:0:7} \
+              --parameter-overrides ID=${CIRCLE_WORKFLOW_ID:0:7}
+      - run:
+          name: Append IP to inventory file
+          command: |
+            aws ec2 describe-instances \
+            --query 'Reservations[*].Instances[*].PublicIpAddress' \
+            --filters "Name=tag:project,Values=prometheus" \
+            --output text >> .circleci/ansible/inventory.txt
+      - run:
+          name: Install prometheus and alertmanager on server
+          command: |
+            cd .circleci/ansible
+            cat inventory.txt
+            ansible-playbook -i inventory.txt configure-prometheus-alertmanager.yml  
           
           
 workflows:
