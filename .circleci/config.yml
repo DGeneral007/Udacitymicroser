@@ -220,7 +220,7 @@ jobs:
       - install_ansible
       - install_awscli
       - add_ssh_keys:
-          fingerprints: ["a6:76:5d:a3:01:c3:8e:0c:c7:55:23:12:ca:6c:71:3c"]
+          fingerprints: ["21:e6:ca:37:dc:3a:60:fa:d4:7e:6c:df:a9:a0:2e:9f"]
       - attach_workspace:
           at: ~/
       - run:
@@ -311,7 +311,7 @@ jobs:
       - restore_cache:
           keys: [backend-deps]
       - add_ssh_keys:
-          fingerprints: ["a6:76:5d:a3:01:c3:8e:0c:c7:55:23:12:ca:6c:71:3c"]
+          fingerprints: ["21:e6:ca:37:dc:3a:60:fa:d4:7e:6c:df:a9:a0:2e:9f"]
       - attach_workspace:
           at: ~/
       - run:
@@ -479,7 +479,7 @@ jobs:
       - install_ansible
       - install_awscli
       - add_ssh_keys:
-          fingerprints: ["a6:76:5d:a3:01:c3:8e:0c:c7:55:23:12:ca:6c:71:3c"]
+          fingerprints: ["21:e6:ca:37:dc:3a:60:fa:d4:7e:6c:df:a9:a0:2e:9f"]
       # - run:
       #     name: Install dependencies
       #     command: |
@@ -506,7 +506,7 @@ jobs:
       - install_ansible
       - install_awscli
       - add_ssh_keys:
-          fingerprints: ["a6:76:5d:a3:01:c3:8e:0c:c7:55:23:12:ca:6c:71:3c"]
+          fingerprints: ["21:e6:ca:37:dc:3a:60:fa:d4:7e:6c:df:a9:a0:2e:9f"]
       # - run:
       #     name: Install dependencies
       #     command: |
