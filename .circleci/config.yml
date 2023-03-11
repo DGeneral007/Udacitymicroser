@@ -488,7 +488,7 @@ jobs:
       #       curl -sL https://rpm.nodesource.com/setup_13.x | bash -
       #       yum install -y nodejs
       #       amazon-linux-extras install -y epel
-      #       yum install -y ansible
+      #       yum install -y ansible  .
       - attach_workspace:
           at: ~/
       - run:
